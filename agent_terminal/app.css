@@ -1,0 +1,87 @@
+/* A sleek, modern theme for the Agent Terminal application */
+
+AgentTerminal {
+    background: #1e1e2e;
+    color: #cdd6f4;
+}
+
+Header {
+    background: #11111b;
+    color: #cdd6f4;
+    text-style: bold;
+    dock: top;
+}
+
+Footer {
+    background: #11111b;
+    color: #a6adc8;
+    dock: bottom;
+}
+
+/* Style the key bindings in the footer */
+Footer > .footer--key-name {
+    background: #45475a;
+    color: #cdd6f4;
+}
+
+Footer > .footer--description {
+    color: #bac2de;
+}
+
+TabbedContent {
+    background: #181825;
+    height: 100%;
+}
+
+TabPane {
+    padding: 1;
+}
+
+/* Style the tabs */
+Tabs {
+    background: #11111b;
+    dock: top;
+}
+
+Tab {
+    background: #313244;
+    color: #cdd6f4;
+    padding: 0 2;
+}
+
+Tab:hover {
+    background: #45475a;
+}
+
+Tab.--active {
+    background: #89b4fa;
+    color: #1e1e2e;
+    text-style: bold;
+}
+
+Input {
+    background: #313244;
+    color: #cdd6f4;
+    border: tall #45475a;
+    dock: bottom;
+    margin: 0 1;
+}
+
+Input:focus {
+    border: tall #89b4fa;
+}
+
+Input.--placeholder {
+    color: #6c7086;
+}
+
+AgentView {
+    border: round #45475a;
+    background: #1e1e2e;
+    height: 100%;
+    width: 100%;
+}
+
+AgentView:focus {
+    border: round #89b4fa;
+}
