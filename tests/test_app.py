@@ -27,12 +27,18 @@ mock_ollama_agent_instance.get_response = AsyncMock(return_value=MOCK_RESPONSE)
 MockOpenAIAgent = MagicMock(return_value=mock_openai_agent_instance)
 MockOllamaAgent = MagicMock(return_value=mock_ollama_agent_instance)
 
+# Mock the VoiceCloningAgent to prevent model downloads during tests
+mock_vc_agent_instance = MagicMock()
+mock_vc_agent_instance.get_response = AsyncMock(return_value=MOCK_RESPONSE)
+MockVoiceCloningAgent = MagicMock(return_value=mock_vc_agent_instance)
+
 
 @patch.dict(
     "agent_terminal.app.AgentTerminal.agent_classes",
     {
         "OpenAIAgent": MockOpenAIAgent,
         "OllamaAgent": MockOllamaAgent,
+        "VoiceCloningAgent": MockVoiceCloningAgent,
     },
 )
 class TestAgentTerminal:

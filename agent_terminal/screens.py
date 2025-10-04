@@ -12,10 +12,11 @@ AGENT_TYPES = [
     ("OpenAI: GPT-3.5 Turbo", "OpenAIAgent", "gpt-3.5-turbo"),
     ("Ollama: Llama 3", "OllamaAgent", "llama3"),
     ("Ollama: Custom", "OllamaAgent", None),  # Allows user to specify a model
+    ("Voice Cloning (GPT-4o)", "VoiceCloningAgent", "gpt-4o"),
 ]
 
 
-class AgentSelectionScreen(ModalScreen[tuple[str, str] | None]):
+class AgentSelectionScreen(ModalScreen[tuple | None]):
     """A modal screen for selecting and configuring a new AI agent."""
 
     def compose(self) -> ComposeResult:
@@ -29,6 +30,12 @@ class AgentSelectionScreen(ModalScreen[tuple[str, str] | None]):
             ),
             Label("Model Name (if custom)", id="model_name_label"),
             Input(placeholder="e.g., codellama", id="model_name_input", disabled=True),
+            Label("Reference Audio Path", id="audio_path_label", classes="hidden"),
+            Input(
+                placeholder="/path/to/voice.wav",
+                id="audio_path_input",
+                classes="hidden",
+            ),
             Button("Create", variant="primary", id="create_button"),
             Button("Cancel", variant="default", id="cancel_button"),
             id="agent_selection_grid",
@@ -58,16 +65,46 @@ class AgentSelectionScreen(ModalScreen[tuple[str, str] | None]):
                 self.bell()
                 return
 
-            self.dismiss((agent_class_name, model_name))
+            if agent_class_name == "VoiceCloningAgent":
+                audio_path = self.query_one("#audio_path_input", Input).value
+                if not audio_path:
+                    self.bell()
+                    return
+                self.dismiss((agent_class_name, model_name, audio_path))
+            else:
+                self.dismiss((agent_class_name, model_name))
         else:
             self.dismiss(None)
 
     def on_select_changed(self, event: Select.Changed) -> None:
-        """Enable the model name input only for the 'Ollama: Custom' option."""
+        """Enable or disable inputs based on agent selection."""
         model_input = self.query_one("#model_name_input", Input)
+        audio_path_label = self.query_one("#audio_path_label")
+        audio_path_input = self.query_one("#audio_path_input")
+
+        selected_config = next(
+            (config for config in AGENT_TYPES if config[0] == event.value), None
+        )
+
+        # Default state: hide all optional fields
+        model_input.disabled = True
+        model_input.clear()
+        audio_path_label.add_class("hidden")
+        audio_path_input.add_class("hidden")
+        audio_path_input.clear()
+
+        if not selected_config:
+            return
+
+        _, agent_class_name, _ = selected_config
+
+        # Handle custom Ollama model input
         if event.value == "Ollama: Custom":
             model_input.disabled = False
             model_input.focus()
-        else:
-            model_input.disabled = True
-            model_input.clear()
+
+        # Handle voice cloning audio path input
+        if agent_class_name == "VoiceCloningAgent":
+            audio_path_label.remove_class("hidden")
+            audio_path_input.remove_class("hidden")
+            audio_path_input.focus()
