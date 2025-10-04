@@ -1,7 +1,7 @@
 """The main application for the Agent Terminal."""
 
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Footer, Header, Input, TabbedContent, TabPane
 
 from agent_terminal.agents.base import Agent
@@ -9,6 +9,7 @@ from agent_terminal.agents.openai_agent import OpenAIAgent
 from agent_terminal.agents.ollama_agent import OllamaAgent
 from agent_terminal.screens import AgentSelectionScreen
 from agent_terminal.widgets.agent_view import AgentView
+from agent_terminal.widgets.mascot import Mascot
 
 
 class AgentTerminal(App):
@@ -33,7 +34,9 @@ class AgentTerminal(App):
         """Create child widgets for the app."""
         yield Header()
         with Vertical():
-            yield TabbedContent(id="agents")
+            with Horizontal():
+                yield Mascot()
+                yield TabbedContent(id="agents")
             yield Input(placeholder="Enter your prompt here...", id="prompt_input", disabled=True)
         yield Footer()
 
